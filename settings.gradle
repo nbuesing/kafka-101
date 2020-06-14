@@ -1,0 +1,13 @@
+rootProject.name = 'kafka-101'
+
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+	}
+}
+
+include 'cluster'
+include 'producer'
+include 'consumer'

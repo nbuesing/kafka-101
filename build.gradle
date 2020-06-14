@@ -1,0 +1,59 @@
+plugins {
+    id 'idea'
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+        maven {
+            url "https://packages.confluent.io/maven/"
+        }
+    }
+}
+
+subprojects {
+    version = '1.0'
+}
+
+
+configure(subprojects.findAll { project -> file("${project.name}/src/main/java").exists() }) {
+
+    apply plugin: 'java'
+    apply plugin: 'application'
+
+    group = 'com.nbuesing.kafka101'
+    description = "${project.name}"
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    idea {
+        module {
+            inheritOutputDirs = false
+            outputDir = compileJava.destinationDir
+            testOutputDir = compileTestJava.destinationDir
+        }
+    }
+
+    dependencies {
+
+        implementation "org.apache.kafka:kafka-clients:${kafka_version}"
+        implementation "org.apache.commons:commons-lang3:${apache_commons_version}"
+        implementation "org.slf4j:slf4j-api:${slf4j_version}"
+        implementation "ch.qos.logback:logback-classic:${logback_version}"
+        implementation "com.beust:jcommander:${jcommander_version}"
+
+        // lombok dependencies
+        compileOnly "org.projectlombok:lombok:${lombok_version}"
+        annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+
+        testCompileOnly "org.projectlombok:lombok:${lombok_version}"
+        testAnnotationProcessor "org.projectlombok:lombok:${lombok_version}"
+    }
+
+    application {
+        mainClass = "com.buesing.kafka101.${project.name}.Main"
+    }
+
+}

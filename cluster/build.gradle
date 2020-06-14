@@ -1,0 +1,39 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:0.12.1"
+    }
+}
+
+apply plugin: 'docker-compose'
+
+/**
+ * Make sure 'projectName' is the same as the COMPOSE_PROJECT_NAME within .env, this is to ensure the same project
+ * name is used if you execute docker compose through gradle or from the command line.
+ */
+dockerCompose {
+    projectName = "kafka-101"
+}
+
+def browse(path) {
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if (os.isWindows()) {
+        exec { commandLine 'cmd', '/c', "start $path" }
+    } else if (os.isMacOsX()) {
+        exec { commandLine 'open', "$path" }
+    }
+}
+
+task grafana {
+    doLast {
+        browse('http://localhost:3000/d/2001/kafka?orgId=1&refresh=5s')
+    }
+}
+
+task akhq {
+    doLast {
+        browse('http://localhost:8080')
+    }
+}
