@@ -21,17 +21,70 @@ The provided Apache Kafka Cluster is a 3 Broker / 1 Zookeeper cluster through th
     `./gradlew cluster:grafana` or `http://localhost:3000`
 
     * Dashboard
+     
+     Shows Health of Cluster
         
         [Dashboard](./doc/grafana_dashboard.png)
 
     * Topic  
     
+    Shows Activity of a given Topic
        
 * Kafka Visualization through Web Based Tool
 
     `./gradlew cluster:akhq` or `http://localhost:8080`
+
+  If port 8080 conflicts with other services you have running on your machine, changing port mapping, e.g. "9091:8080" works.
+     
+## Topic    
     
-* Useful command line options to produce and consume string based messages to a given topic
+* Create Topic
+
+   ```
+   kafka-topics \
+     --bootstrap-server localhost:19092 \
+     --replication-factor 3 \
+     --partitions 10 \
+     --create \
+     --topic isr2
+   ```
+
+* Create Topic with different settings
+
+   ```
+   kafka-topics \
+     --bootstrap-server localhost:19092 \
+     --replication-factor 3 \
+     --partitions 10 \
+     --create \
+     --config min.insync.replicas=3 \
+     --topic isr3
+   ```
+  
+* Producer
+
+   ```
+   kafka-console-producer \
+     --bootstrap-server localhost:19092 \
+     --property parse.key=true \
+     --property key.separator=\| \
+     --topic foo
+   ```
+  
+* Consumer
+
+   ```
+   kafka-console-consumer \
+     --bootstrap-server localhost:19092 \
+     --from-beginning \
+     --property print.key=true \
+     --property key.separator=" | "  \
+     --topic foo
+   ```
+    
+ 
+   
+## Useful command line options to produce and consume string based messages to a given topic
 
   * Produce
   
@@ -54,7 +107,11 @@ The provided Apache Kafka Cluster is a 3 Broker / 1 Zookeeper cluster through th
         --topic ${topic}
     ```
 
-* Useful command line options to produce and consume Avro based messages to a given topic
+## Avro
+
+  * This is out of scope for current provided content.
+  
+### Useful command line options to produce and consume Avro based messages to a given topic
 
   * Produce
   
