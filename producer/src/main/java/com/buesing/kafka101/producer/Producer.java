@@ -12,6 +12,7 @@ import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -23,10 +24,35 @@ public class Producer {
 
         log.info("starting producer " + options);
 
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties(options));
+
+        for (int i = 0; i < options.getCount(); i++) {
+            Future<RecordMetadata> f = producer.send(new ProducerRecord<>(options.getTopic(), "KEY_" + i, "VALUE_" + i), (metadata, exception) -> {
+                dumpMetadata(metadata, exception);
+            });
+        }
+
+//        try {
+//            TimeUnit.SECONDS.sleep(20);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+
+        producer.close();
     }
 
     private Map<String, Object> properties(final Options options) {
         final Map<String, Object> properties = new HashMap<>();
+
+        properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, options.getBootstrapServers());
+        properties.put(ProducerConfig.SECURITY_PROVIDERS_CONFIG, "PLAINTEXT");
+
+        properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        properties.put(ProducerConfig.LINGER_MS_CONFIG, 10L);
+        properties.put(ProducerConfig.ACKS_CONFIG, "1");
+        properties.put(ProducerConfig.RETRIES_CONFIG, 10);
 
         return properties;
     }

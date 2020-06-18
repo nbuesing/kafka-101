@@ -63,24 +63,15 @@ The provided Apache Kafka Cluster is a 3 Broker / 1 Zookeeper cluster through th
   
 * Producer
 
-   ```
-   kafka-console-producer \
-     --bootstrap-server localhost:19092 \
-     --property parse.key=true \
-     --property key.separator=\| \
-     --topic foo
-   ```
+```
+kafka-console-producer --bootstrap-server localhost:19092 --property parse.key=true --property key.separator=\| --topic foo
+```
   
 * Consumer
 
-   ```
-   kafka-console-consumer \
-     --bootstrap-server localhost:19092 \
-     --from-beginning \
-     --property print.key=true \
-     --property key.separator=" | "  \
-     --topic foo
-   ```
+```
+kafka-console-consumer --bootstrap-server localhost:19092 --from-beginning --property print.key=true --property key.separator=" | "  --topic foo
+```
     
  
    
@@ -93,6 +84,7 @@ The provided Apache Kafka Cluster is a 3 Broker / 1 Zookeeper cluster through th
         --broker-list localhost:19092 \
         --property parse.key=true \
         --property key.separator=\| \
+        --producer-property acks=-1 \
         --topic ${topic}
     ```
 
